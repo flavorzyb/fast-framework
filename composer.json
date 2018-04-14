@@ -21,11 +21,13 @@
         "ext-redis": "*",
         "nesbot/carbon": "~1.24.1",
         "ramsey/uuid": "^3.7",
+        "moontoast/math": "^1.1",
+        "ircmaxell/random-lib": "^1.1",
         "symfony/finder": "~4.0",
         "symfony/process": "~4.0",
         "symfony/routing": "~4.0",
-        "symfony/var-dumper": "~4.0",
         "psr/container": "~1.0",
+        "doctrine/inflector": "~1.1",
         "psr/simple-cache": "^1.0",
         "smarty/smarty": "~3.1"
     },
@@ -35,7 +37,6 @@
     },
     "autoload": {
         "files": [
-            "src/Support/helpers.php"
         ],
         "psr-4": {
             "Fast\\": "src/"
