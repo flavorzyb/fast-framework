@@ -121,6 +121,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($count = $this->count()) {
             return $this->sum($callback) / $count;
         }
+
+        return null;
     }
 
     /**
@@ -145,7 +147,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         $count = $this->count();
 
         if ($count == 0) {
-            return;
+            return null;
         }
 
         $values = (isset($key) ? $this->pluck($key) : $this)
@@ -173,7 +175,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         $count = $this->count();
 
         if ($count == 0) {
-            return;
+            return null;
         }
 
         $collection = isset($key) ? $this->pluck($key) : $this;
@@ -259,36 +261,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         return new static(Arr::crossJoin(
             $this->items, ...array_map([$this, 'getArrayableItems'], $lists)
         ));
-    }
-
-    /**
-     * Dump the collection and end the script.
-     *
-     * @return void
-     */
-    public function dd(...$args)
-    {
-        http_response_code(500);
-
-        call_user_func_array([$this, 'dump'], $args);
-
-        die(1);
-    }
-
-    /**
-     * Dump the collection.
-     *
-     * @return $this
-     */
-    public function dump()
-    {
-        (new static(func_get_args()))
-            ->push($this)
-            ->each(function ($item) {
-                (new Dumper)->dump($item);
-            });
-
-        return $this;
     }
 
     /**
@@ -420,7 +392,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get all items except for those with the specified keys.
      *
-     * @param  \Illuminate\Support\Collection|mixed  $keys
+     * @param  \Fast\Support\Collection|mixed  $keys
      * @return static
      */
     public function except($keys)
@@ -1746,16 +1718,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     }
 
     /**
-     * Get a base Support collection instance from this collection.
-     *
-     * @return \Fast\Support\Collection
-     */
-    public function toBase()
-    {
-        return new self($this);
-    }
-
-    /**
      * Determine if an item exists at an offset.
      *
      * @param  mixed  $key
@@ -1837,17 +1799,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         }
 
         return (array) $items;
-    }
-
-    /**
-     * Add a method to the list of proxied methods.
-     *
-     * @param  string  $method
-     * @return void
-     */
-    public static function proxy($method)
-    {
-        static::$proxies[] = $method;
     }
 
     /**

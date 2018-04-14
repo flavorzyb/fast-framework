@@ -38,42 +38,6 @@ class CarbonTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $this->now);
     }
 
-    public function testCarbonIsMacroableWhenNotCalledStatically()
-    {
-        Carbon::macro('diffInDecades', function (Carbon $dt = null, $abs = true) {
-            return (int) ($this->diffInYears($dt, $abs) / 10);
-        });
-
-        $this->assertSame(2, $this->now->diffInDecades(Carbon::now()->addYears(25)));
-    }
-
-    public function testCarbonIsMacroableWhenCalledStatically()
-    {
-        Carbon::macro('twoDaysAgoAtNoon', function () {
-            return Carbon::now()->subDays(2)->setTime(12, 0, 0);
-        });
-
-        $this->assertSame('2017-06-25 12:00:00', Carbon::twoDaysAgoAtNoon()->toDateTimeString());
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method Fast\Support\Carbon::nonExistingStaticMacro does not exist.
-     */
-    public function testCarbonRaisesExceptionWhenStaticMacroIsNotFound()
-    {
-        Carbon::nonExistingStaticMacro();
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method Fast\Support\Carbon::nonExistingMacro does not exist.
-     */
-    public function testCarbonRaisesExceptionWhenMacroIsNotFound()
-    {
-        Carbon::now()->nonExistingMacro();
-    }
-
     public function testCarbonAllowsCustomSerializer()
     {
         Carbon::serializeUsing(function (Carbon $carbon) {

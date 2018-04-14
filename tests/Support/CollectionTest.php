@@ -960,7 +960,7 @@ class CollectionTest extends TestCase
     {
         $data = new Collection(['a' => 'taylor', 'b' => 'dayle']);
 
-        $this->assertEquals(['b' => 'dayle', 'a' => 'taylor'], $data->sortKeys()->all());
+        $this->assertEquals(['b' => 'dayle', 'a' => 'taylor'], $data->sortKeysDesc()->all());
     }
 
     public function testReverse()
@@ -1171,37 +1171,6 @@ class CollectionTest extends TestCase
         $data = new Collection(['taylor', 'dayle', 'shawn']);
         $data = $data->take(-2);
         $this->assertEquals([1 => 'dayle', 2 => 'shawn'], $data->all());
-    }
-
-    public function testMacroable()
-    {
-        // Foo() macro : unique values starting with A
-        Collection::macro('foo', function () {
-            return $this->filter(function ($item) {
-                return strpos($item, 'a') === 0;
-            })
-                ->unique()
-                ->values();
-        });
-
-        $c = new Collection(['a', 'a', 'aa', 'aaa', 'bar']);
-
-        $this->assertSame(['a', 'aa', 'aaa'], $c->foo()->all());
-    }
-
-    public function testCanAddMethodsToProxy()
-    {
-        Collection::macro('adults', function ($callback) {
-            return $this->filter(function ($item) use ($callback) {
-                return $callback($item) >= 18;
-            });
-        });
-
-        Collection::proxy('adults');
-
-        $c = new Collection([['age' => 3], ['age' => 12], ['age' => 18], ['age' => 56]]);
-
-        $this->assertSame([['age' => 18], ['age' => 56]], $c->adults->age->values()->all());
     }
 
     public function testMakeMethod()
@@ -1768,6 +1737,15 @@ class CollectionTest extends TestCase
         ]);
         $result = $data->keyBy(function ($item, $key) {
             return strtolower($key.'-'.$item['firstname'].$item['lastname']);
+        });
+        $this->assertEquals([
+            '0-taylorotwell' => ['firstname' => 'Taylor', 'lastname' => 'Otwell', 'locale' => 'US'],
+            '1-lucasmichot' => ['firstname' => 'Lucas', 'lastname' => 'Michot', 'locale' => 'FR'],
+        ], $result->all());
+
+        // by object
+        $result = $data->keyBy(function ($item, $key) {
+            return new TestTestCollectionKeyBy(strtolower($key.'-'.$item['firstname'].$item['lastname']));
         });
         $this->assertEquals([
             '0-taylorotwell' => ['firstname' => 'Taylor', 'lastname' => 'Otwell', 'locale' => 'US'],
@@ -2783,4 +2761,29 @@ class TestCollectionMapIntoObject
 class TestCollectionSubclass extends Collection
 {
     //
+}
+
+class TestTestCollectionKeyBy {
+
+    /**
+     * @var string
+     */
+    private $value = '';
+
+    /**
+     * TestTestCollectionKeyBy constructor.
+     * @param string $value
+     */
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->value;
+    }
 }
