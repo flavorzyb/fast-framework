@@ -19,6 +19,14 @@
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-redis": "*",
+        "nesbot/carbon": "~1.24.1",
+        "ramsey/uuid": "^3.7",
+        "symfony/finder": "~4.0",
+        "symfony/process": "~4.0",
+        "symfony/routing": "~4.0",
+        "symfony/var-dumper": "~4.0",
+        "psr/container": "~1.0",
+        "psr/simple-cache": "^1.0",
         "smarty/smarty": "~3.1"
     },
     "require-dev": {
@@ -27,18 +35,27 @@
     },
     "autoload": {
         "files": [
+            "src/Support/helpers.php"
         ],
         "psr-4": {
+            "Fast\\": "src/"
         }
     },
     "autoload-dev": {
         "files": [
         ],
         "psr-4": {
+            "Fast\\Tests\\": "tests/"
         }
     },
     "config": {
         "sort-packages": true
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true
