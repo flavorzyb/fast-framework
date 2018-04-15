@@ -31,7 +31,13 @@ class ArrTest extends TestCase
 
     public function testCollapse()
     {
+        $data = [['foo', 'bar'], new Collection(['baz'])];
+        $this->assertEquals(['foo', 'bar', 'baz'], Arr::collapse($data));
+
         $data = [['foo', 'bar'], ['baz']];
+        $this->assertEquals(['foo', 'bar', 'baz'], Arr::collapse($data));
+
+        $data = [['foo', 'bar'], ['baz'], new stdClass()];
         $this->assertEquals(['foo', 'bar', 'baz'], Arr::collapse($data));
     }
 
@@ -133,6 +139,10 @@ class ArrTest extends TestCase
 
         $this->assertEquals(200, $value);
         $this->assertEquals(100, Arr::first($array));
+
+        $this->assertEquals(100, Arr::first([], null, 100));
+
+        $this->assertEquals(100, Arr::first([], function ($value) { return $value; }, 100));
     }
 
     public function testLast()
@@ -495,6 +505,13 @@ class ArrTest extends TestCase
         $array = ['products' => ['desk' => ['price' => 100]]];
         Arr::set($array, 'products.desk.price', 200);
         $this->assertEquals(['products' => ['desk' => ['price' => 200]]], $array);
+
+        Arr::set($array, null, ['products' => 100]);
+        $this->assertEquals(['products' => 100], $array);
+
+        $array = ['products' => ['table' => ['price' => 100]]];
+        Arr::set($array, 'products.desk.price', 200);
+        $this->assertEquals(['products' => ['table' => ['price' => 100], 'desk' => ['price' => 200]]], $array);
     }
 
     public function testShuffleWithSeed()
@@ -503,6 +520,9 @@ class ArrTest extends TestCase
             Arr::shuffle(range(0, 100, 10), 1234),
             Arr::shuffle(range(0, 100, 10), 1234)
         );
+
+        $data = Arr::shuffle(range(0, 100, 10));
+        $this->assertEquals(11, sizeof($data));
     }
 
     public function testSort()

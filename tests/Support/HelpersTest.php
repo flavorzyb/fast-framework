@@ -3,6 +3,8 @@
 namespace Fast\Tests\Support;
 
 use ArrayAccess;
+use stdClass;
+use Fast\Support\Collection;
 use Mockery as m;
 use Fast\Support\Arr;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +42,22 @@ class HelpersTest extends TestCase
         $this->assertNull(data_get($arrayAccess, 'email', 'Not found'));
     }
 
+    public function testDataGetKeyIsNull()
+    {
+        $data = ['123' => 'test'];
+        $this->assertEquals($data, data_get($data, null));
+    }
+
+    public function testDataGetTargetIsCollection() {
+        $data = new Collection(['key' => 'test']);
+        $this->assertEquals(['test'], data_get($data, ['*']));
+    }
+
+    public function testDataGetTargetIsObject() {
+        $data = new \stdClass();
+        $this->assertEquals('test', data_get($data, ['*'], 'test'));
+    }
+
     public function testDataSet()
     {
         $data = ['foo' => 'bar'];
@@ -73,6 +91,34 @@ class HelpersTest extends TestCase
             ['foo' => ['bar' => 'boom'], 'baz' => ['bar' => ['boom' => ['kaboom' => 'boom']]]],
             data_set($data, 'baz.bar.boom.kaboom', 'boom')
         );
+    }
+
+    public function testDataSetKeyIsArray()
+    {
+        $data = ['foo' => ['test' => 'bar'], 'baz' => ['test' => 'boom']];
+        $result = ['foo' => ['test' => 'test1'], 'baz' => ['test' => 'test1']];
+        $this->assertEquals($result, data_set($data, ['*', 'test'], 'test1'));
+
+        $data = ['foo' => ['test' => 'bar'], 'baz' => ['test' => 'boom']];
+        $result = ['foo' => ['test' => 'bar'], 'baz' => ['test' => 'boom'], 'key' => ['test2' => 'test1']];
+        $this->assertEquals($result, data_set($data, ['key', 'test2'], 'test1'));
+    }
+
+    public function testDataSetTargetIsObject()
+    {
+        $data = new stdClass();
+        $data->foo = ['test' => 'bar'];
+        $result = new stdClass();
+        $result->foo = ['test' => 'bar'];
+        $result->bar = 'test1';
+        $this->assertEquals($result, data_set($data, ['bar'], 'test1'));
+
+        $data = new stdClass();
+        $data->foo = ['test' => 'bar'];
+        $result = new stdClass();
+        $result->foo = ['test' => 'bar'];
+        $result->key = ['bar' => 'test1'];
+        $this->assertEquals($result, data_set($data, ['key', 'bar'], 'test1'));
     }
 
     public function testValue()
