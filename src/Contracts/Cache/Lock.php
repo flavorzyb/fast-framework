@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Cache;
+namespace Fast\Contracts\Cache;
 
 interface Lock
 {

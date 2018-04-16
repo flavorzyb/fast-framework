@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Contracts\Cache;
+namespace Fast\Contracts\Cache;
 
 use Closure;
 use Psr\SimpleCache\CacheInterface;
@@ -119,7 +119,7 @@ interface Repository extends CacheInterface
     /**
      * Get the cache store implementation.
      *
-     * @return \Illuminate\Contracts\Cache\Store
+     * @return \Fast\Contracts\Cache\Store
      */
     public function getStore();
 }
