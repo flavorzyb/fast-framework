@@ -5,9 +5,6 @@ namespace Fast\Redis;
 use InvalidArgumentException;
 use Fast\Contracts\Redis\Factory;
 
-/**
- * @mixin \Fast\Redis\Connections\Connection
- */
 class RedisManager implements Factory
 {
     /**
@@ -104,7 +101,7 @@ class RedisManager implements Factory
     /**
      * Get the connector instance for the current driver.
      *
-     * @return \Fast\Redis\Connectors\PhpRedisConnector|\Fast\Redis\Connectors\PredisConnector
+     * @return \Fast\Redis\Connectors\PhpRedisConnector
      */
     protected function connector()
     {

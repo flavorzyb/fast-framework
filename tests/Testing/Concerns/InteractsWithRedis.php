@@ -82,11 +82,10 @@ trait InteractsWithRedis
     public function redisDriverProvider()
     {
         $providers = [
-            ['predis'],
         ];
 
         if (extension_loaded('redis')) {
-            $providers[] = ['phpredis'];
+            $providers[] = 'phpredis';
         }
 
         return $providers;
