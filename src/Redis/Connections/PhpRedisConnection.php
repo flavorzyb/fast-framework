@@ -50,7 +50,7 @@ class PhpRedisConnection extends Connection
     /**
      * Determine if the given keys exist.
      *
-     * @param  dynamic  $keys
+     * @param array $keys
      * @return int
      */
     public function exists(...$keys)

@@ -134,6 +134,18 @@ class HelpersTest extends TestCase
         $array = [[1], [2], [3], ['foo', 'bar'], collect(['baz', 'boom'])];
         $this->assertEquals([1, 2, 3, 'foo', 'bar', 'baz', 'boom'], Arr::collapse($array));
     }
+
+    public function testTap()
+    {
+        $object = (object) ['id' => 1];
+        $this->assertEquals(2, tap($object, function ($object) {
+            $object->id = 2;
+        })->id);
+
+        $mock = m::mock();
+        $mock->shouldReceive('foo')->once()->andReturn('bar');
+        $this->assertEquals($mock, tap($mock)->foo());
+    }
 }
 
 class TestArrayAccess implements ArrayAccess

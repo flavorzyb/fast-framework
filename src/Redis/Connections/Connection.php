@@ -3,18 +3,16 @@
 namespace Fast\Redis\Connections;
 
 use Closure;
-use Fast\Redis\Limiters\DurationLimiterBuilder;
-use Fast\Redis\Limiters\ConcurrencyLimiterBuilder;
 
 /**
- * @mixin \Predis\Client
+ * @mixin \Redis
  */
 abstract class Connection
 {
     /**
-     * The Predis client.
+     * The Redis client.
      *
-     * @var \Predis\Client
+     * @var \Redis
      */
     protected $client;
 
@@ -27,28 +25,6 @@ abstract class Connection
      * @return void
      */
     abstract public function createSubscription($channels, Closure $callback, $method = 'subscribe');
-
-    /**
-     * Funnel a callback for a maximum number of simultaneous executions.
-     *
-     * @param  string  $name
-     * @return \Fast\Redis\Limiters\ConcurrencyLimiterBuilder
-     */
-    public function funnel($name)
-    {
-        return new ConcurrencyLimiterBuilder($this, $name);
-    }
-
-    /**
-     * Throttle a callback for a maximum number of executions over a given duration.
-     *
-     * @param  string  $name
-     * @return \Fast\Redis\Limiters\DurationLimiterBuilder
-     */
-    public function throttle($name)
-    {
-        return new DurationLimiterBuilder($this, $name);
-    }
 
     /**
      * Get the underlying Redis client.
@@ -69,7 +45,7 @@ abstract class Connection
      */
     public function subscribe($channels, Closure $callback)
     {
-        return $this->createSubscription($channels, $callback, __FUNCTION__);
+        $this->createSubscription($channels, $callback, __FUNCTION__);
     }
 
     /**
@@ -81,7 +57,7 @@ abstract class Connection
      */
     public function psubscribe($channels, Closure $callback)
     {
-        return $this->createSubscription($channels, $callback, __FUNCTION__);
+        $this->createSubscription($channels, $callback, __FUNCTION__);
     }
 
     /**
