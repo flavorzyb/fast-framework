@@ -17,4 +17,5 @@ class PhpRedisConnectionTest extends TestCase
         parent::tearDown();
     }
 
+
 }
