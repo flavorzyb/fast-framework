@@ -1,19 +1,11 @@
 <?php
-
 namespace Fast\Redis;
 
+use Fast\Redis\Connectors\RedisConnector;
 use InvalidArgumentException;
-use Fast\Contracts\Redis\Factory;
 
-class RedisManager implements Factory
+class RedisManager
 {
-    /**
-     * The name of the default driver.
-     *
-     * @var string
-     */
-    protected $driver;
-
     /**
      * The Redis server configurations.
      *
@@ -31,13 +23,11 @@ class RedisManager implements Factory
     /**
      * Create a new Redis manager instance.
      *
-     * @param  string  $driver
      * @param  array  $config
      * @return void
      */
-    public function __construct($driver, array $config)
+    public function __construct(array $config)
     {
-        $this->driver = $driver;
         $this->config = $config;
     }
 
@@ -45,7 +35,7 @@ class RedisManager implements Factory
      * Get a Redis connection by name.
      *
      * @param  string|null  $name
-     * @return \Fast\Redis\Connections\Connection
+     * @return \Redis
      */
     public function connection($name = null)
     {
@@ -62,7 +52,7 @@ class RedisManager implements Factory
      * Resolve the given connection by name.
      *
      * @param  string|null  $name
-     * @return \Fast\Redis\Connections\Connection
+     * @return \Redis|\RedisCluster
      *
      * @throws \InvalidArgumentException
      */
@@ -87,7 +77,7 @@ class RedisManager implements Factory
      * Resolve the given cluster connection by name.
      *
      * @param  string  $name
-     * @return \Fast\Redis\Connections\Connection
+     * @return \RedisCluster
      */
     protected function resolveCluster($name)
     {
@@ -101,14 +91,11 @@ class RedisManager implements Factory
     /**
      * Get the connector instance for the current driver.
      *
-     * @return \Fast\Redis\Connectors\PhpRedisConnector
+     * @return \Fast\Redis\Connectors\RedisConnector
      */
     protected function connector()
     {
-        switch ($this->driver) {
-            case 'phpredis':
-                return new Connectors\PhpRedisConnector;
-        }
+        return new RedisConnector();
     }
 
     /**
@@ -119,17 +106,5 @@ class RedisManager implements Factory
     public function connections()
     {
         return $this->connections;
-    }
-
-    /**
-     * Pass methods onto the default Redis connection.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        return $this->connection()->{$method}(...$parameters);
     }
 }

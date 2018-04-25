@@ -1,44 +1,41 @@
 <?php
-
 namespace Fast\Redis\Connectors;
 
 use Redis;
 use RedisCluster;
 use Fast\Support\Arr;
-use Fast\Redis\Connections\PhpRedisConnection;
-use Fast\Redis\Connections\PhpRedisClusterConnection;
 
-class PhpRedisConnector
+class RedisConnector
 {
     /**
-     * Create a new clustered Predis connection.
+     * Create a new Redis connection.
      *
      * @param  array  $config
      * @param  array  $options
-     * @return \Fast\Redis\Connections\PhpRedisConnection
+     * @return \Redis
      */
     public function connect(array $config, array $options)
     {
-        return new PhpRedisConnection($this->createClient(array_merge(
+        return $this->createClient(array_merge(
             $config, $options, Arr::pull($config, 'options', [])
-        )));
+        ));
     }
 
     /**
-     * Create a new clustered Predis connection.
+     * Create a new clustered connection.
      *
      * @param  array  $config
      * @param  array  $clusterOptions
      * @param  array  $options
-     * @return \Fast\Redis\Connections\PhpRedisClusterConnection
+     * @return \RedisCluster
      */
     public function connectToCluster(array $config, array $clusterOptions, array $options)
     {
         $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
 
-        return new PhpRedisClusterConnection($this->createRedisClusterInstance(
+        return $this->createRedisClusterInstance(
             array_map([$this, 'buildClusterConnectionString'], $config), $options
-        ));
+        );
     }
 
     /**
@@ -50,8 +47,8 @@ class PhpRedisConnector
     protected function buildClusterConnectionString(array $server)
     {
         return $server['host'].':'.$server['port'].'?'.http_build_query(Arr::only($server, [
-            'database', 'password', 'prefix', 'read_timeout',
-        ]));
+                'database', 'password', 'prefix', 'read_timeout',
+            ]));
     }
 
     /**
@@ -62,25 +59,26 @@ class PhpRedisConnector
      */
     protected function createClient(array $config)
     {
-        return tap(new Redis, function (Redis $client) use ($config) {
-            $this->establishConnection($client, $config);
+        $result = new Redis();
+        $this->establishConnection($result, $config);
 
-            if (! empty($config['password'])) {
-                $client->auth($config['password']);
-            }
+        if (! empty($config['password'])) {
+            $result->auth($config['password']);
+        }
 
-            if (! empty($config['database'])) {
-                $client->select($config['database']);
-            }
+        if (! empty($config['database'])) {
+            $result->select($config['database']);
+        }
 
-            if (! empty($config['prefix'])) {
-                $client->setOption(Redis::OPT_PREFIX, $config['prefix']);
-            }
+        if (! empty($config['prefix'])) {
+            $result->setOption(Redis::OPT_PREFIX, $config['prefix']);
+        }
 
-            if (! empty($config['read_timeout'])) {
-                $client->setOption(Redis::OPT_READ_TIMEOUT, $config['read_timeout']);
-            }
-        });
+        if (! empty($config['read_timeout'])) {
+            $result->setOption(Redis::OPT_READ_TIMEOUT, $config['read_timeout']);
+        }
+
+        return $result;
     }
 
     /**
