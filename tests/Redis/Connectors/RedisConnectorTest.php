@@ -23,7 +23,7 @@ class RedisConnectorTest extends TestCase
         return [
             'host' => $host,
             'port' => $port,
-            'timeout' => 5000,
+            'timeout' => 5,
         ];
     }
 
@@ -33,16 +33,16 @@ class RedisConnectorTest extends TestCase
             'database' => 1,
             'prefix' => 'test',
             'persistent' => true,
-            'read_timeout' => 5000,
+            'read_timeout' => 5,
         ];
     }
 
     private function getClusterOptions() {
         return [
-            'timeout' => 5000,
+            'timeout' => 5,
             'prefix' => 'test',
             'persistent' => true,
-            'read_timeout' => 5000,
+            'read_timeout' => 5,
         ];
     }
 
@@ -52,17 +52,17 @@ class RedisConnectorTest extends TestCase
             [
                 'host' => $host,
                 'port' => 10004,
-                'timeout' => 5000,
+                'timeout' => 5,
             ],
             [
                 'host' => $host,
                 'port' => 10005,
-                'timeout' => 5000,
+                'timeout' => 5,
             ],
             [
             'host' => $host,
             'port' => 10006,
-            'timeout' => 5000,
+            'timeout' => 5,
             ]
         ];
     }

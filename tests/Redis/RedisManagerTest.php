@@ -29,24 +29,24 @@ class RedisManagerTest extends TestCase
             'default' => [
                 'host' => $host,
                 'port' => $port,
-                'timeout' => 5000,
+                'timeout' => 5,
             ],
             'clusters' => [
                 'cluster' => [
                     [
                         'host' => '10.3.218.2',
                         'port' => 10004,
-                        'timeout' => 5000,
+                        'timeout' => 5,
                     ],
                     [
                         'host' => '10.3.218.2',
                         'port' => 10005,
-                        'timeout' => 5000,
+                        'timeout' => 5,
                     ],
                     [
                         'host' => '10.3.218.2',
                         'port' => 10006,
-                        'timeout' => 5000,
+                        'timeout' => 5,
                     ]
                 ]
             ],
