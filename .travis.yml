@@ -46,10 +46,10 @@ before_install:
   - echo "dir /var/lib/redis/cluster/{port}" >> ./redis-cluster.conf
   - echo "cluster-enabled yes" >> ./redis-cluster.conf
   - echo "daemonize yes" >> ./redis-cluster.conf
-  - sudo chmod 700 /var/lib/redis
-  - sudo sed 's/{port}/8000/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8000.conf
-  - sudo sed 's/{port}/8001/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8001.conf
-  - sudo sed 's/{port}/8002/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8002.conf
+  - sudo chmod -R 777 /var/lib/redis
+  - sed 's/{port}/8000/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8000.conf
+  - sed 's/{port}/8001/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8001.conf
+  - sed 's/{port}/8002/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8002.conf
 
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8000.conf
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8001.conf
