@@ -61,7 +61,7 @@ before_install:
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8004.conf
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8005.conf
 
-  - sudo /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002 127.0.0.1:8003 127.0.0.1:8004 127.0.0.1:8005
+  - sudo echo "yes" | /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002 127.0.0.1:8003 127.0.0.1:8004 127.0.0.1:8005
   - sudo rm -rf redis-4.0.9 redis-4.0.9.tar.gz
 
 install:
