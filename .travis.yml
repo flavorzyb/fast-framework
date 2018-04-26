@@ -39,17 +39,6 @@ before_install:
   - tar xzf redis-4.0.9.tar.gz
   - cd redis-4.0.9
   - make
-  - sudo mkdir -p /etc/redis /var/lib/redis/cluster/{8000,8001,8002}
-
-install:
-  - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
-  - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
-
-
-  - wget http://download.redis.io/releases/redis-4.0.9.tar.gz
-  - tar xzf redis-4.0.9.tar.gz
-  - cd redis-4.0.9
-  - make
   - sudo make PREFIX=/var/lib/redis install
   - sudo cp src/redis-trib.rb /var/lib/redis/
   - sudo mkdir -p /var/lib/redis/cluster/{8000,8001,8002}
@@ -66,5 +55,13 @@ install:
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8001.conf
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8002.conf
   - sudo /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002
+  - sudo rm -rf redis-4.0.9 redis-4.0.9.tar.gz
+  
+install:
+  - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
+  - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
+
+
+
 
 script: cd build && ../vendor/bin/phpunit
