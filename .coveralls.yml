@@ -1,1 +1,3 @@
 repo_token: xPBDiwGEvm6tgoeurGcJwvYGe3NlbqFFX
+coverage_clover:  build/coverages/coverage.xml
+json_path: build/coverages/coveralls-upload.json

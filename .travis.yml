@@ -69,7 +69,7 @@ install:
   - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
 
 script:
-- cd build && ../vendor/bin/phpunit
+  - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
 
 after_success:
   - travis_retry php vendor/bin/php-coveralls -v
