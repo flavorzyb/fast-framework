@@ -34,7 +34,7 @@ before_install:
   - phpenv config-rm xdebug.ini || true
   - printf "\n" | pecl install -f redis
   - travis_retry composer self-update
-
+  - gem install redis
   - wget http://download.redis.io/releases/redis-4.0.9.tar.gz
   - tar xzf redis-4.0.9.tar.gz
   - cd redis-4.0.9
