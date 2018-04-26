@@ -29,8 +29,8 @@ class RedisConnectorTest extends TestCase
 
     private function getOptions() {
         return [
-            'password' => '',
-            'database' => '',
+            'password' => '123456',
+            'database' => 1,
             'prefix' => 'test',
             'persistent' => true,
             'read_timeout' => 5000,
@@ -43,6 +43,27 @@ class RedisConnectorTest extends TestCase
             'prefix' => 'test',
             'persistent' => true,
             'read_timeout' => 5000,
+        ];
+    }
+
+    private function getClusterConfigs() {
+        $host = getenv('REDIS_HOST') ?: '10.3.218.2';
+        return [
+            [
+                'host' => $host,
+                'port' => 10004,
+                'timeout' => 5000,
+            ],
+            [
+                'host' => $host,
+                'port' => 10005,
+                'timeout' => 5000,
+            ],
+            [
+            'host' => $host,
+            'port' => 10006,
+            'timeout' => 5000,
+            ]
         ];
     }
 
@@ -59,23 +80,7 @@ class RedisConnectorTest extends TestCase
 
     public function testConnectToCluster()
     {
-        $result = $this->connector->connectToCluster([$this->getConfigs()], $this->getClusterOptions(), $this->getOptions());
-        $this->assertTrue($result instanceof \RedisCluster);
-        /**
-         * {
-        "port": 10004,
-        "host": "10.3.218.2"
-        },
-        {
-        "port": 10005,
-        "host": "10.3.218.2"
-        },
-        {
-        "port": 10006,
-        "host": "10.3.218.2"
-        },
-         */
-        $result = new \RedisCluster('test', ['10.3.218.2:10004', '10.3.218.2:10005', '10.3.218.2:10006'], 5000, 5000, true);
+        $result = $this->connector->connectToCluster($this->getClusterConfigs(), $this->getClusterOptions(), $this->getOptions());
         $this->assertTrue($result instanceof \RedisCluster);
     }
 }
