@@ -3,7 +3,14 @@ language: php
 env:
   global:
     - setup=stable
-
+    - REDIS_HOST=127.0.0.1
+    - REDIS_PORT=6379
+    - REDIS_CLUSTER_HOST_1=127.0.0.1
+    - REDIS_CLUSTER_HOST_2=127.0.0.1
+    - REDIS_CLUSTER_HOST_3=127.0.0.1
+    - REDIS_CLUSTER_PORT_1=8000
+    - REDIS_CLUSTER_PORT_2=8001
+    - REDIS_CLUSTER_PORT_3=8002
 matrix:
   fast_finish: true
   include:
@@ -28,8 +35,36 @@ before_install:
   - printf "\n" | pecl install -f redis
   - travis_retry composer self-update
 
+  - wget http://download.redis.io/releases/redis-4.0.9.tar.gz
+  - tar xzf redis-4.0.9.tar.gz
+  - cd redis-4.0.9
+  - make
+  - sudo mkdir -p /etc/redis /var/lib/redis/cluster/{8000,8001,8002}
+
 install:
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
   - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
+
+
+  - wget http://download.redis.io/releases/redis-4.0.9.tar.gz
+  - tar xzf redis-4.0.9.tar.gz
+  - cd redis-4.0.9
+  - make
+  - sudo make PREFIX=/var/lib/redis install
+  - sudo cp src/redis-trib.rb /var/lib/redis/
+  - sudo mkdir -p /var/lib/redis/cluster/{8000,8001,8002}
+  - sudo echo "port {port}" > /var/lib/redis/redis-cluster.conf
+  - sudo echo "dir /var/lib/redis/cluster/{port}" >> /var/lib/redis/redis-cluster.conf
+  - sudo echo "cluster-enabled yes" >> /var/lib/redis/redis-cluster.conf
+  - sudo echo "daemonize yes" >> /var/lib/redis/redis-cluster.conf
+
+  - sudo sed 's/{port}/8000/' /var/lib/redis/redis-cluster.conf > /var/lib/redis/redis-cluster-8000.conf
+  - sudo sed 's/{port}/8001/' /var/lib/redis/redis-cluster.conf > /var/lib/redis/redis-cluster-8001.conf
+  - sudo sed 's/{port}/8002/' /var/lib/redis/redis-cluster.conf > /var/lib/redis/redis-cluster-8002.conf
+
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8000.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8001.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8002.conf
+  - sudo /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002
 
 script: cd build && ../vendor/bin/phpunit

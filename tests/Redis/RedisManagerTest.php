@@ -34,20 +34,20 @@ class RedisManagerTest extends TestCase
             'clusters' => [
                 'cluster' => [
                     [
-                        'host' => '10.3.218.2',
-                        'port' => 10004,
+                        'host'    => getenv('REDIS_CLUSTER_HOST_1') ?: '10.3.218.2',
+                        'port'    => getenv('REDIS_CLUSTER_PORT_1') ?: 10004,
                         'timeout' => 5,
                     ],
                     [
-                        'host' => '10.3.218.2',
-                        'port' => 10005,
+                        'host'    => getenv('REDIS_CLUSTER_HOST_2') ?: '10.3.218.2',
+                        'port'    => getenv('REDIS_CLUSTER_PORT_2') ?: 10005,
                         'timeout' => 5,
                     ],
                     [
-                        'host' => '10.3.218.2',
-                        'port' => 10006,
+                        'host'    => getenv('REDIS_CLUSTER_HOST_3') ?: '10.3.218.2',
+                        'port'    => getenv('REDIS_CLUSTER_PORT_3') ?: 10006,
                         'timeout' => 5,
-                    ]
+                    ],
                 ]
             ],
         ];

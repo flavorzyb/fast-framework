@@ -1,4 +1,5 @@
 <?php
+
 namespace Fast\Tests\Redis\Connectors;
 
 use Fast\Redis\Connectors\RedisConnector;
@@ -17,53 +18,57 @@ class RedisConnectorTest extends TestCase
         $this->connector = new RedisConnector();
     }
 
-    private function getConfigs() {
+    private function getConfigs()
+    {
         $host = getenv('REDIS_HOST') ?: '127.0.0.1';
         $port = getenv('REDIS_PORT') ?: 6379;
+
         return [
-            'host' => $host,
-            'port' => $port,
+            'host'    => $host,
+            'port'    => $port,
             'timeout' => 5,
         ];
     }
 
-    private function getOptions() {
+    private function getOptions()
+    {
         return [
-            'password' => '123456',
-            'database' => 1,
-            'prefix' => 'test',
-            'persistent' => true,
+            'password'     => '123456',
+            'database'     => 1,
+            'prefix'       => 'test',
+            'persistent'   => true,
             'read_timeout' => 5,
         ];
     }
 
-    private function getClusterOptions() {
+    private function getClusterOptions()
+    {
         return [
-            'timeout' => 5,
-            'prefix' => 'test',
-            'persistent' => true,
+            'timeout'      => 5,
+            'prefix'       => 'test',
+            'persistent'   => true,
             'read_timeout' => 5,
         ];
     }
 
-    private function getClusterConfigs() {
-        $host = getenv('REDIS_HOST') ?: '10.3.218.2';
+    private function getClusterConfigs()
+    {
         return [
             [
-                'host' => $host,
-                'port' => 10004,
+                'host'    => getenv('REDIS_CLUSTER_HOST_1') ?: '10.3.218.2',
+                'port'    => getenv('REDIS_CLUSTER_PORT_1') ?: 10004,
                 'timeout' => 5,
             ],
             [
-                'host' => $host,
-                'port' => 10005,
+                'host'    => getenv('REDIS_CLUSTER_HOST_2') ?: '10.3.218.2',
+                'port'    => getenv('REDIS_CLUSTER_PORT_2') ?: 10005,
                 'timeout' => 5,
             ],
             [
-            'host' => $host,
-            'port' => 10006,
-            'timeout' => 5,
-            ]
+                'host'    => getenv('REDIS_CLUSTER_HOST_3') ?: '10.3.218.2',
+                'port'    => getenv('REDIS_CLUSTER_PORT_3') ?: 10006,
+                'timeout' => 5,
+            ],
         ];
     }
 
