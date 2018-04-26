@@ -54,6 +54,7 @@ before_install:
   - sed 's/{port}/8003/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8003.conf
   - sed 's/{port}/8004/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8004.conf
   - sed 's/{port}/8005/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8005.conf
+  - cd ../
   - sudo rm -rf redis-4.0.9 redis-4.0.9.tar.gz
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8000.conf
   - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8001.conf
