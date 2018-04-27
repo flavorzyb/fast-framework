@@ -11,7 +11,10 @@ env:
     - REDIS_CLUSTER_PORT_1=8000
     - REDIS_CLUSTER_PORT_2=8001
     - REDIS_CLUSTER_PORT_3=8002
-
+    - CI_NAME=true
+    - TRAVIS=true
+    - TRAVIS_JOB_ID=371937439
+    
 matrix:
   fast_finish: true
   include:
@@ -72,5 +75,4 @@ script:
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
 
 after_success:
-  - env list
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
