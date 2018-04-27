@@ -11,6 +11,7 @@ env:
     - REDIS_CLUSTER_PORT_1=8000
     - REDIS_CLUSTER_PORT_2=8001
     - REDIS_CLUSTER_PORT_3=8002
+
 matrix:
   fast_finish: true
   include:
@@ -68,7 +69,9 @@ install:
   - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
 
 script:
-  - travis_retry php vendor/bin/phpunit -c build/phpunit.xml --coverage-clover build/coverages/coverage.xml
+  - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
 
 after_success:
+  - export COVERALLS_RUN_LOCALLY=1
+  - export COVERALLS_REPO_TOKEN=xPBDiwGEvm6tgoeurGcJwvYGe3NlbqFFX
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
