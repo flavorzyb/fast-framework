@@ -74,4 +74,4 @@ script:
 
 after_success:
   - sudo chmod -R 777 build
-  - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
+  - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml -x build/coverages/coverage.xml -o build/coverages/coveralls-upload.json
