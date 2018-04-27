@@ -70,6 +70,6 @@ install:
 
 script:
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
-
+  - travis_retry php vendor/bin/phpunit -c build/phpunit.xml --coverage-clover build/coverages/coverage.xml
 after_success:
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
