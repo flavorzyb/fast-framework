@@ -72,6 +72,4 @@ script:
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
 
 after_success:
-  - export COVERALLS_RUN_LOCALLY=1
-  - export COVERALLS_REPO_TOKEN=xPBDiwGEvm6tgoeurGcJwvYGe3NlbqFFX
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
