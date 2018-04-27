@@ -72,8 +72,9 @@ script:
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
 
 after_success:
-  - TRAVIS
-  - TRAVIS_JOB_ID
-  - CI_NAME
-  - COVERALLS_REPO_TOKEN
+  - env TRAVIS=$TRAVIS
+  - env TRAVIS_JOB_ID=$TRAVIS_JOB_ID
+  - env CI_NAME=$CI_NAME
+  - env COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN
+  - env list
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
