@@ -70,7 +70,7 @@ install:
 
 script:
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
-  - sudo chomod -R 777 build
+  - sudo chmod -R 777 build
 
 after_success:
   - sudo chmod -R 777 build
