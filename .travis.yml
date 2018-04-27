@@ -31,7 +31,6 @@ services:
   - redis-server
 
 before_install:
-  - phpenv config-rm xdebug.ini || true
   - printf "\n" | pecl install -f redis
   - travis_retry composer self-update
 
@@ -69,7 +68,7 @@ install:
   - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
 
 script:
-  - travis_retry php vendor/bin/phpunit -c build/phpunit.xml
   - travis_retry php vendor/bin/phpunit -c build/phpunit.xml --coverage-clover build/coverages/coverage.xml
+
 after_success:
   - travis_retry php vendor/bin/php-coveralls -v -c .coveralls.yml
