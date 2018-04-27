@@ -3,14 +3,13 @@
 namespace Fast\Cache;
 
 use Fast\Contracts\Cache\Store;
-use Fast\Contracts\Redis\Factory as Redis;
 
 class RedisStore implements Store
 {
     /**
      * The Redis factory implementation.
      *
-     * @var \Fast\Contracts\Redis\Factory
+     * @var \Redis|\RedisCluster
      */
     protected $redis;
 
@@ -22,25 +21,16 @@ class RedisStore implements Store
     protected $prefix;
 
     /**
-     * The Redis connection that should be used.
-     *
-     * @var string
-     */
-    protected $connection;
-
-    /**
      * Create a new Redis store.
      *
-     * @param  \Fast\Contracts\Redis\Factory  $redis
+     * @param  \Redis|\RedisCluster  $redis
      * @param  string  $prefix
-     * @param  string  $connection
      * @return void
      */
-    public function __construct(Redis $redis, $prefix = '', $connection = 'default')
+    public function __construct($redis, $prefix = '')
     {
         $this->redis = $redis;
         $this->setPrefix($prefix);
-        $this->setConnection($connection);
     }
 
     /**
@@ -51,7 +41,7 @@ class RedisStore implements Store
      */
     public function get($key)
     {
-        $value = $this->connection()->get($this->prefix.$key);
+        $value = $this->redis->get($this->prefix.$key);
 
         return ! is_null($value) ? $this->unserialize($value) : null;
     }
@@ -68,7 +58,7 @@ class RedisStore implements Store
     {
         $results = [];
 
-        $values = $this->connection()->mget(array_map(function ($key) {
+        $values = $this->redis->mget(array_map(function ($key) {
             return $this->prefix.$key;
         }, $keys));
 
@@ -89,7 +79,7 @@ class RedisStore implements Store
      */
     public function put($key, $value, $minutes)
     {
-        $this->connection()->setex(
+        $this->redis->setex(
             $this->prefix.$key, (int) max(1, $minutes * 60), $this->serialize($value)
         );
     }
@@ -103,30 +93,13 @@ class RedisStore implements Store
      */
     public function putMany(array $values, $minutes)
     {
-        $this->connection()->multi();
+        $this->redis->multi();
 
         foreach ($values as $key => $value) {
             $this->put($key, $value, $minutes);
         }
 
-        $this->connection()->exec();
-    }
-
-    /**
-     * Store an item in the cache if the key doesn't exist.
-     *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @param  float|int  $minutes
-     * @return bool
-     */
-    public function add($key, $value, $minutes)
-    {
-        $lua = "return redis.call('exists',KEYS[1])<1 and redis.call('setex',KEYS[1],ARGV[2],ARGV[1])";
-
-        return (bool) $this->connection()->eval(
-            $lua, 1, $this->prefix.$key, $this->serialize($value), (int) max(1, $minutes * 60)
-        );
+        $this->redis->exec();
     }
 
     /**
@@ -138,7 +111,7 @@ class RedisStore implements Store
      */
     public function increment($key, $value = 1)
     {
-        return $this->connection()->incrby($this->prefix.$key, $value);
+        return $this->redis->incrBy($this->prefix.$key, $value);
     }
 
     /**
@@ -150,7 +123,7 @@ class RedisStore implements Store
      */
     public function decrement($key, $value = 1)
     {
-        return $this->connection()->decrby($this->prefix.$key, $value);
+        return $this->redis->decrBy($this->prefix.$key, $value);
     }
 
     /**
@@ -162,19 +135,7 @@ class RedisStore implements Store
      */
     public function forever($key, $value)
     {
-        $this->connection()->set($this->prefix.$key, $this->serialize($value));
-    }
-
-    /**
-     * Get a lock instance.
-     *
-     * @param  string  $name
-     * @param  int  $seconds
-     * @return \Fast\Contracts\Cache\Lock
-     */
-    public function lock($name, $seconds = 0)
-    {
-        return new RedisLock($this->connection(), $this->prefix.$name, $seconds);
+        $this->redis->set($this->prefix.$key, $this->serialize($value));
     }
 
     /**
@@ -185,7 +146,7 @@ class RedisStore implements Store
      */
     public function forget($key)
     {
-        return (bool) $this->connection()->del($this->prefix.$key);
+        return (bool) $this->redis->del($this->prefix.$key);
     }
 
     /**
@@ -195,49 +156,15 @@ class RedisStore implements Store
      */
     public function flush()
     {
-        $this->connection()->flushdb();
+        $this->redis->flushAll();
 
         return true;
     }
 
     /**
-     * Begin executing a new tags operation.
-     *
-     * @param  array|mixed  $names
-     * @return \Fast\Cache\RedisTaggedCache
-     */
-    public function tags($names)
-    {
-        return new RedisTaggedCache(
-            $this, new TagSet($this, is_array($names) ? $names : func_get_args())
-        );
-    }
-
-    /**
-     * Get the Redis connection instance.
-     *
-     * @return \Predis\ClientInterface
-     */
-    public function connection()
-    {
-        return $this->redis->connection($this->connection);
-    }
-
-    /**
-     * Set the connection name to be used.
-     *
-     * @param  string  $connection
-     * @return void
-     */
-    public function setConnection($connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
      * Get the Redis database instance.
      *
-     * @return \Fast\Contracts\Redis\Factory
+     * @return \Redis|\RedisCluster
      */
     public function getRedis()
     {
