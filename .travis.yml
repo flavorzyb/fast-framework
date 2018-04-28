@@ -8,9 +8,15 @@ env:
     - REDIS_CLUSTER_HOST_1=127.0.0.1
     - REDIS_CLUSTER_HOST_2=127.0.0.1
     - REDIS_CLUSTER_HOST_3=127.0.0.1
-    - REDIS_CLUSTER_PORT_1=8000
-    - REDIS_CLUSTER_PORT_2=8001
-    - REDIS_CLUSTER_PORT_3=8002
+    - REDIS_CLUSTER_HOST_4=127.0.0.1
+    - REDIS_CLUSTER_HOST_5=127.0.0.1
+    - REDIS_CLUSTER_HOST_6=127.0.0.1
+    - REDIS_CLUSTER_PORT_1=10001
+    - REDIS_CLUSTER_PORT_2=10002
+    - REDIS_CLUSTER_PORT_3=10003
+    - REDIS_CLUSTER_PORT_4=10004
+    - REDIS_CLUSTER_PORT_5=10005
+    - REDIS_CLUSTER_PORT_6=10006
 
 matrix:
   fast_finish: true
@@ -42,27 +48,28 @@ before_install:
   - make
   - sudo make PREFIX=/var/lib/redis install
   - sudo cp src/redis-trib.rb /var/lib/redis/
-  - sudo mkdir -p /var/lib/redis/cluster/{8000,8001,8002,8003,8004,8005}
+  - sudo mkdir -p /var/lib/redis/cluster/{10001,10002,10003,10004,10005,10006}
   - echo "port {port}" > ./redis-cluster.conf
+  - echo "bind 127.0.0.1" >> ./redis-cluster.conf
   - echo "dir /var/lib/redis/cluster/{port}" >> ./redis-cluster.conf
   - echo "cluster-enabled yes" >> ./redis-cluster.conf
   - echo "daemonize yes" >> ./redis-cluster.conf
   - sudo chmod -R 777 /var/lib/redis
-  - sed 's/{port}/8000/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8000.conf
-  - sed 's/{port}/8001/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8001.conf
-  - sed 's/{port}/8002/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8002.conf
-  - sed 's/{port}/8003/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8003.conf
-  - sed 's/{port}/8004/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8004.conf
-  - sed 's/{port}/8005/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-8005.conf
+  - sed 's/{port}/10001/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10001.conf
+  - sed 's/{port}/10002/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10002.conf
+  - sed 's/{port}/10003/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10003.conf
+  - sed 's/{port}/10004/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10004.conf
+  - sed 's/{port}/10005/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10005.conf
+  - sed 's/{port}/10006/' ./redis-cluster.conf > /var/lib/redis/redis-cluster-10006.conf
   - cd ../
   - sudo rm -rf redis-4.0.9 redis-4.0.9.tar.gz
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8000.conf
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8001.conf
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8002.conf
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8003.conf
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8004.conf
-  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-8005.conf
-  - sudo echo "yes" | /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:8000 127.0.0.1:8001 127.0.0.1:8002 127.0.0.1:8003 127.0.0.1:8004 127.0.0.1:8005
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10001.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10002.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10003.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10004.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10005.conf
+  - sudo /var/lib/redis/bin/redis-server /var/lib/redis/redis-cluster-10006.conf
+  - sudo echo "yes" | /var/lib/redis/redis-trib.rb create  --replicas  1 127.0.0.1:10001 127.0.0.1:10002 127.0.0.1:10003 127.0.0.1:10004 127.0.0.1:10005 127.0.0.1:10006
 
 install:
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
