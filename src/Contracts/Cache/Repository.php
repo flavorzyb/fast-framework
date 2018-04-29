@@ -44,16 +44,6 @@ interface Repository extends CacheInterface
     public function put($key, $value, $minutes);
 
     /**
-     * Store an item in the cache if the key does not exist.
-     *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @param  \DateTimeInterface|\DateInterval|float|int  $minutes
-     * @return bool
-     */
-    public function add($key, $value, $minutes);
-
-    /**
      * Increment the value of an item in the cache.
      *
      * @param  string  $key

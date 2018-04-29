@@ -55,21 +55,6 @@ trait InteractsWithRedis
                 'port'    => getenv('REDIS_CLUSTER_PORT_3') ?: 10003,
                 'timeout' => 5,
             ],
-            [
-                'host'    => getenv('REDIS_CLUSTER_HOST_3') ?: '127.0.0.1',
-                'port'    => getenv('REDIS_CLUSTER_PORT_4') ?: 10004,
-                'timeout' => 5,
-            ],
-            [
-                'host'    => getenv('REDIS_CLUSTER_HOST_5') ?: '127.0.0.1',
-                'port'    => getenv('REDIS_CLUSTER_PORT_5') ?: 10005,
-                'timeout' => 5,
-            ],
-            [
-                'host'    => getenv('REDIS_CLUSTER_HOST_6') ?: '127.0.0.1',
-                'port'    => getenv('REDIS_CLUSTER_PORT_6') ?: 10006,
-                'timeout' => 5,
-            ],
         ];
     }
 
