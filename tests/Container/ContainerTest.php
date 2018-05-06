@@ -199,7 +199,10 @@ class ContainerTest extends TestCase
 
         $bound = new stdClass;
         $resolved = $container->instance('foo', $bound);
+        $this->assertSame($bound, $resolved);
 
+        $container->alias('foo', 'bar');
+        $resolved = $container->instance('bar', $bound);
         $this->assertSame($bound, $resolved);
     }
 
@@ -390,11 +393,16 @@ class ContainerTest extends TestCase
     public function testBoundInstanceAndAliasCheckViaArrayAccess()
     {
         $container = new Container;
-        $container->instance('object', new stdClass);
+        $obj = new stdClass;
+        $container->instance('object', $obj);
         $container->alias('object', 'alias');
 
         $this->assertTrue(isset($container['object']));
         $this->assertTrue(isset($container['alias']));
+
+        $container->test = $obj;
+        $result = $container->test;
+        $this->assertEquals($obj, $result);
     }
 
     public function testReboundListeners()

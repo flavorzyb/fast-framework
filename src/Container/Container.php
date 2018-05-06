@@ -619,6 +619,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  string  $abstract
      * @param  array  $parameters
      * @return mixed
+     * @throws
      */
     protected function resolve($abstract, $parameters = [])
     {
@@ -752,8 +753,7 @@ class Container implements ArrayAccess, ContainerContract
      *
      * @param  string  $concrete
      * @return mixed
-     *
-     * @throws \Fast\Contracts\Container\BindingResolutionException
+     * @throws \Fast\Contracts\Container\BindingResolutionException|\ReflectionException
      */
     public function build($concrete)
     {
@@ -770,7 +770,8 @@ class Container implements ArrayAccess, ContainerContract
         // an abstract type such as an Interface of Abstract Class and there is
         // no binding registered for the abstractions so we need to bail out.
         if (! $reflector->isInstantiable()) {
-            return $this->notInstantiable($concrete);
+            $this->notInstantiable($concrete);
+            return null;
         }
 
         $this->buildStack[] = $concrete;
@@ -805,6 +806,7 @@ class Container implements ArrayAccess, ContainerContract
      *
      * @param  array  $dependencies
      * @return array
+     * @throws \Fast\Contracts\Container\BindingResolutionException
      */
     protected function resolveDependencies(array $dependencies)
     {
