@@ -5,7 +5,6 @@ namespace Fast\Container;
 use Closure;
 use ReflectionMethod;
 use ReflectionFunction;
-use InvalidArgumentException;
 
 class BoundMethod
 {
@@ -39,8 +38,6 @@ class BoundMethod
      * @param  array  $parameters
      * @param  string|null  $defaultMethod
      * @return mixed
-     *
-     * @throws \InvalidArgumentException
      */
     protected static function callClass($container, $target, array $parameters = [], $defaultMethod = null)
     {
@@ -51,10 +48,6 @@ class BoundMethod
         // we can pass right back into the "call" method for dependency binding.
         $method = count($segments) == 2
                         ? $segments[1] : $defaultMethod;
-
-        if (is_null($method)) {
-            throw new InvalidArgumentException('Method not provided.');
-        }
 
         return static::call(
             $container, [$container->make($segments[0]), $method], $parameters
