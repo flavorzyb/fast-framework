@@ -519,7 +519,7 @@ class ContainerTest extends TestCase
     public function testCallWithAtSignBasedClassReferencesWithoutMethodThrowsException()
     {
         $container = new Container;
-        $result = $container->call('ContainerTestCallStub');
+        $container->call('ContainerTestCallStub');
     }
 
     public function testCallWithAtSignBasedClassReferences()
@@ -587,14 +587,14 @@ class ContainerTest extends TestCase
     public function testBindMethodAcceptsAnArray()
     {
         $container = new Container;
-        $container->bindMethod([\Fast\Tests\Container\ContainerTestCallStub::class, 'unresolvable'], function ($stub) {
+        $container->bindMethod([ContainerTestCallStub::class, 'unresolvable'], function ($stub) {
             return $stub->unresolvable('foo', 'bar');
         });
         $result = $container->call('Fast\Tests\Container\ContainerTestCallStub@unresolvable');
         $this->assertEquals(['foo', 'bar'], $result);
 
         $container = new Container;
-        $container->bindMethod([\Fast\Tests\Container\ContainerTestCallStub::class, 'unresolvable'], function ($stub) {
+        $container->bindMethod([ContainerTestCallStub::class, 'unresolvable'], function ($stub) {
             return $stub->unresolvable('foo', 'bar');
         });
         $result = $container->call([new ContainerTestCallStub, 'unresolvable']);
