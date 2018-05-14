@@ -421,6 +421,50 @@ class ContainerTest extends TestCase
         $this->assertTrue($_SERVER['__test.rebind']);
     }
 
+    public function testRefreshListeners() {
+
+        $container = new Container;
+        $container->bind('param', function () {
+            return new ContainerTestRefreshParam(10);
+        });
+
+        $obj = new ContainerTestRefresh($container['param']);
+        $container->refresh('param', $obj, 'setFoo');
+        $container->bind('param', function () {
+            return new ContainerTestRefreshParam(20);
+        });
+
+        $result = $container->make('param');
+        $this->assertEquals($result->getValue(), 20);
+        $this->assertEquals($obj->getFoo()->getValue(), 20);
+    }
+
+    public function testAfterResolvingOnInstance() {
+        unset($_SERVER['__test.afterResolving']);
+        $container = new Container;
+        $container->bind('foo', function () {
+            return 10;
+        });
+        $container->afterResolving('foo', function () {
+            $_SERVER['__test.afterResolving'] = true;
+        });
+        $container->make('foo');
+        $this->assertTrue($_SERVER['__test.afterResolving']);
+    }
+
+    public function testAfterResolvingOnInstanceAbstractIsClosure() {
+        unset($_SERVER['__test.afterResolving']);
+        $container = new Container;
+        $container->bind('foo', function () {
+            return 10;
+        });
+        $container->afterResolving(function () {
+            $_SERVER['__test.afterResolving'] = true;
+        });
+        $container->make('foo');
+        $this->assertTrue($_SERVER['__test.afterResolving']);
+    }
+
     public function testReboundListenersOnInstances()
     {
         unset($_SERVER['__test.rebind']);
@@ -479,6 +523,13 @@ class ContainerTest extends TestCase
     {
         $container = new Container;
         $container->make('Fast\Tests\Container\ContainerTestContextInjectOne', []);
+    }
+
+    public function testBindingResolutionOptional()
+    {
+        $container = new Container;
+        $result = $container->make('Fast\Tests\Container\ContainerTestContextOptions', []);
+        $this->assertInstanceOf('Fast\Tests\Container\ContainerTestContextOptions', $result);
     }
 
     public function testCallWithDependencies()
@@ -1162,6 +1213,16 @@ class ContainerTestContextInjectOne
     }
 }
 
+class ContainerTestContextOptions
+{
+    public $impl;
+
+    public function __construct(IContainerContractStub $impl  = null)
+    {
+        $this->impl = $impl;
+    }
+}
+
 class ContainerTestContextInjectTwo
 {
     public $impl;
@@ -1212,5 +1273,55 @@ class ContainerTestContextInjectInstantiations implements IContainerContractStub
     public function __construct()
     {
         static::$instantiations++;
+    }
+}
+
+class ContainerTestRefresh {
+    /**
+     * @var ContainerTestRefreshParam
+     */
+    private $foo;
+
+    /**
+     * ContainerTestRefresh constructor.
+     * @param ContainerTestRefreshParam $foo
+     */
+    public function __construct(ContainerTestRefreshParam $foo)
+    {
+        $this->foo = $foo;
+    }
+
+
+    public function setFoo(ContainerTestRefreshParam $value) {
+        return $this->foo = $value;
+    }
+
+    /**
+     * @return ContainerTestRefreshParam
+     */
+    public function getFoo()
+    {
+        return $this->foo;
+    }
+}
+
+class ContainerTestRefreshParam {
+    private $value = 0;
+
+    /**
+     * ContainerTestRefreshParam constructor.
+     * @param int $value
+     */
+    public function __construct(int $value = 0)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 }

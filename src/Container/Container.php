@@ -770,8 +770,7 @@ class Container implements ArrayAccess, ContainerContract
         // an abstract type such as an Interface of Abstract Class and there is
         // no binding registered for the abstractions so we need to bail out.
         if (! $reflector->isInstantiable()) {
-            $this->notInstantiable($concrete);
-            return null;
+            return $this->notInstantiable($concrete);
         }
 
         $this->buildStack[] = $concrete;
@@ -885,7 +884,7 @@ class Container implements ArrayAccess, ContainerContract
             return $parameter->getDefaultValue();
         }
 
-        $this->unresolvablePrimitive($parameter);
+        return $this->unresolvablePrimitive($parameter);
     }
 
     /**
